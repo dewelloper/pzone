@@ -1,0 +1,52 @@
+.mini-car {
+    position: absolute;
+    width: 25%;
+    background: #fff;
+    z-index: 99;
+    box-shadow: 2px 2px 1px 0 rgba(0,0,0,0.2);
+    transition: right 200ms ease-in-out;
+    padding: 20px;
+    text-align: left;
+    font-size: 90%;
+    overflow: auto;
+    max-height: 590px;
+    top: 0%;
+  }
+  
+  .mini-car-open .mini-car {
+    left: 0;
+  }
+  
+  .mini-car-item-price {
+    padding-bottom: 6px
+  }
+  
+  .car-option-name {
+    color: #999;
+  }
+  
+  .car-quantity {
+    color: #999;
+  }
+  
+  .mini-car .product-option {
+    margin-bottom: 15px;
+  }
+  
+  .mini-car .product-option-name {
+    color: #777;
+  }
+  
+/*
+Mobile
+*/
+@media screen and (max-width: 769px) {
+  .mini-car {
+    top: 4rem;
+    position: fixed;
+    width: 90%;
+    overflow-y: scroll;
+    font-size: 82%;
+    max-height: none;
+  }
+}
