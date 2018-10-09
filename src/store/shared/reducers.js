@@ -90,6 +90,13 @@ const appReducer = (state = initialState, action) => {
 				carPartFilter: Object.assign({}, state.carPartFilter, action.filter)
 			});
 
+			case t.SET_SEARCHED_TEXT:
+			return Object.assign({}, state, {
+				searchedText: Object.assign({}, state.searchedText, action.filter)
+			});			
+
+			
+
 		case t.LOCATION_CHANGED:
 			return Object.assign({}, state, { location: action.location });
 

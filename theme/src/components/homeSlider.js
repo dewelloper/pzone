@@ -20,7 +20,7 @@ const renderItem = item => (
 	</div>
 );
 
-const HomeSlider = ({ images }) => {
+const HomeSlider = ({ images, currentPage, props }) => {
 	if (images && images.length > 0) {
 		const items = images.map(item => ({
 			original: `/assets/images/${item.image}`,
@@ -29,6 +29,7 @@ const HomeSlider = ({ images }) => {
 			path: item.path || '',
 			button: item.button
 		}));
+
 
 		return (
 			<section className="section" style={{ padding: 0 }}>
@@ -46,7 +47,7 @@ const HomeSlider = ({ images }) => {
 							slideOnThumbnailHover={false}
 							renderItem={renderItem}
 						/>
-						<CarPartFilter />
+						<CarPartFilter currentPage={currentPage} props={props} />
 					</div>
 				</div>
 			</section>
@@ -56,11 +57,13 @@ const HomeSlider = ({ images }) => {
 };
 
 HomeSlider.propTypes = {
-	images: PropTypes.arrayOf(PropTypes.shape({}))
+	images: PropTypes.arrayOf(PropTypes.shape({})),
+	currentPage: PropTypes.object
 };
 
 HomeSlider.defaultProps = {
 	images: null
 };
+
 
 export default HomeSlider;

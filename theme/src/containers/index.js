@@ -8,8 +8,9 @@ import HomeSlider from '../components/homeSlider';
 const IndexContainer = props => {
 	const {
 		addCartItem,
-		state: { pageDetails, settings }
+		state: { currentPage, settings, pageDetails }
 	} = props;
+
 
 	return (
 		<Fragment>
@@ -20,7 +21,9 @@ const IndexContainer = props => {
 				ogTitle={pageDetails.meta_title}
 				ogDescription={pageDetails.meta_description}
 			/>
-			<HomeSlider images={themeSettings.home_slider} />
+			<HomeSlider images={themeSettings.home_slider} 
+				currentPage={currentPage} 
+				props={props}  />
 			{pageDetails.content &&
 				pageDetails.content.length > 10 && (
 					<section className="section">
@@ -58,7 +61,8 @@ IndexContainer.propTypes = {
 	addCartItem: PropTypes.func.isRequired,
 	state: PropTypes.shape({
 		settings: PropTypes.shape({}),
-		pageDetails: PropTypes.shape({})
+		pageDetails: PropTypes.shape({}),
+		currentPage: PropTypes.object
 	}).isRequired
 };
 

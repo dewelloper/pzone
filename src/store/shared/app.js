@@ -73,7 +73,9 @@ class SwitchContainers extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		currentPage: state.app.currentPage
+		currentPage: state.app.currentPage,
+		carPartFilter: state.app.carPartFilter,
+		searchedText: state.app.searchedText,
 	};
 };
 

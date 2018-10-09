@@ -146,19 +146,6 @@ export const addCartItem = item => async (dispatch, getState) => {
 
 const requestAddCartItem = () => ({ type: t.CART_ITEM_ADD_REQUEST });
 
-export const partSearchItem = item => async (dispatch, getState) => {
-	dispatch(requestPartSearchItem());
-	// const response = await api.ajax.cart.addItem(item);
-	// const cart = response.json;
-	// dispatch(receiveCart(cart));
-	// analytics.partSearchItem({
-	// 	item: item,
-	// 	cart: cart
-	// });
-};
-
-const requestPartSearchItem = () => ({ type: t.PART_SEARCH_ITEM_REQUEST });
-
 export const updateCartItemQuantiry = (item_id, quantity) => async (
 	dispatch,
 	getState
@@ -286,11 +273,6 @@ const setProductsFilter = filter => ({
 	filter: filter
 });
 
-const setCarPartFilter = filter => ({
-	type: t.SET_CAR_PART_FILTER,
-	filter: filter
-});
-
 export const analyticsSetShippingMethod = method_id => (dispatch, getState) => {
 	const { app } = getState();
 	analytics.setShippingMethod({
@@ -383,10 +365,37 @@ export const setCurrentPage = location => async (dispatch, getState) => {
 	}
 };
 
+const setCarPartFilter = carPartFilter => ({
+	type: t.SET_CAR_PART_FILTER,
+	filter: carPartFilter
+});
+
+export const setCarPartFilterMethod = partFilter => (dispatch, getState) => {
+	dispatch(setCarPartFilter(partFilter));
+};
+
+const setSearchedText = searchedText => ({
+	type: t.SET_SEARCHED_TEXT,
+	filter: searchedText
+});
+
+export const setSearchedTextMethod = searchedText => (dispatch, getState) => {
+	dispatch(setSearchedText(searchedText));
+};
+
+export const getPartFilter =  () => (dispatch, getState) => {
+	const { app } = getState();
+	return app.carPartFilter;
+}
+
+export const getSearchedText =  () => (dispatch, getState) => {
+	const { app } = getState();
+	return app.searchedText;
+}
+
 const fetchDataOnCurrentPageChange = currentPage => (dispatch, getState) => {
 	const { app } = getState();
 	let productFilter = null;
-	let carPartFilter = null;
 
 	// clear product data
 	dispatch(receiveProduct(null));
@@ -405,12 +414,6 @@ const fetchDataOnCurrentPageChange = currentPage => (dispatch, getState) => {
 			dispatch(setCategory(currentPage.resource));
 			dispatch(setProductsFilter(productFilter));
 			dispatch(fetchProducts());
-
-			carPartFilter = getCarPartFilterForCategory(
-				app.location.search,
-				app.settings.default_product_sorting
-			);
-			dispatch(setCarPartFilter(carPartFilter));
 			break;
 		case SEARCH:
 			productFilter = getProductFilterForSearch(app.location.search);

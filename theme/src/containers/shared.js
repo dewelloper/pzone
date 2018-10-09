@@ -15,11 +15,14 @@ const SharedContainer = props => {
 		themeSettings.hide_footer_on_checkout === true;
 
 	return (
+		
 		<Fragment>
 			<Header {...props} />
 			{children}
 			{!hideFooter && <Footer settings={settings} />}
 		</Fragment>
+
+		
 	);
 };
 

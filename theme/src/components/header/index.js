@@ -97,10 +97,16 @@ export default class Header extends React.Component {
 	};
 
 	handleSearch = search => {
+		var searchedTextContent = {
+			'SearchText': search
+		};
+
 		if (this.props.state.currentPage.path === '/search') {
+			this.props.setSearchedText(searchedTextContent);
 			this.props.setSearch(search);
 		} else {
 			if (search && search !== '') {
+				this.props.setSearchedText('/search?search=' + searchedTextContent);
 				this.props.setLocation('/search?search=' + search);
 			}
 		}

@@ -10,7 +10,13 @@ import CategoriesService from './productCategories';
 import SettingsService from '../settings/settings';
 
 class ProductsService {
-	constructor() {}
+	constructor() { }
+
+	getMatchTextQueryForParts( prtSearchQuery, search) {
+			return {
+				$or: [{ "sku": { "$in": prtSearchQuery } }, {$text:{$search:search}}]
+			};
+	}
 
 	async getProducts(params = {}) {
 		const categories = await CategoriesService.getCategories({
@@ -22,13 +28,50 @@ class ProductsService {
 		const projectQuery = this.getProjectQuery(fieldsArray);
 		const sortQuery = this.getSortQuery(params); // todo: validate every sort field
 		const matchQuery = this.getMatchQuery(params, categories);
-		const matchTextQuery = this.getMatchTextQuery(params);
+		var matchTextQuery;
 		const itemsAggregation = [];
 
-		// $match with $text is only allowed as the first pipeline stage"
-		if (matchTextQuery) {
+		var oems;
+		var matchOems;
+		if (params.search !== undefined && params.search.includes("|")) {
+			var filters = params.search.split('|');
+			var carparts = filters[0].includes('-') ? filters[0] : filters[1];
+			var prtSearchQuery = "";
+			if (carparts != "") {
+				var selections = carparts.split('-');
+				var selectedMark = selections[0];
+				var selectedModel = selections[1];
+				var selectedYear = selections[2];
+				var selectedEngine = selections[3];
+				var selectedFuel = selections[4];
+
+				oems = await db.collection('tt_cars').distinct('oem', {
+					brand: selectedMark,
+					model: selectedModel,
+					startyear: selectedYear,
+					type: selectedEngine,
+					fuel: selectedFuel
+				});
+				var oemsArr = [];
+				for (var i = 0; i < oems.length; i++) {
+					oemsArr.push(oems[i]);
+				}
+			}
+
+			var searchTextQuery = "";
+			var searchedText = filters[0].includes('-') ? filters[1] : filters[0];
+			if (searchedText != "") {
+				searchTextQuery = filters[1];
+			}
+
+			matchTextQuery = this.getMatchTextQueryForParts(oemsArr,searchTextQuery);
 			itemsAggregation.push({ $match: matchTextQuery });
 		}
+		else {
+			matchTextQuery = this.getMatchTextQuery(params);
+			itemsAggregation.push({ $match: matchTextQuery });
+		}
+
 		itemsAggregation.push({ $project: projectQuery });
 		itemsAggregation.push({ $match: matchQuery });
 		if (sortQuery) {
@@ -92,7 +135,9 @@ class ProductsService {
 				projectQuery
 			),
 			SettingsService.getSettings()
-		]);
+		]).catch(hata => {
+			console.log(hata);
+		  });
 
 		const domain = generalSettings.domain || '';
 		const ids = this.getArrayFromCSV(parse.getString(params.ids));
@@ -178,7 +223,7 @@ class ProductsService {
 					name: b._id.value,
 					checked:
 						params[`attributes.${b._id.name}`] &&
-						params[`attributes.${b._id.name}`].includes(b._id.value)
+							params[`attributes.${b._id.name}`].includes(b._id.value)
 							? true
 							: false,
 					// total: b.count,
@@ -690,7 +735,7 @@ class ProductsService {
 					let deleteDir = path.resolve(
 						settings.productsUploadPath + '/' + productId
 					);
-					fse.remove(deleteDir, err => {});
+					fse.remove(deleteDir, err => { });
 				}
 				return deleteResponse.deletedCount > 0;
 			});
