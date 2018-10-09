@@ -69,7 +69,9 @@ class ProductsService {
 		}
 		else {
 			matchTextQuery = this.getMatchTextQuery(params);
-			itemsAggregation.push({ $match: matchTextQuery });
+			if (matchTextQuery) {
+				itemsAggregation.push({ $match: matchTextQuery });
+			}
 		}
 
 		itemsAggregation.push({ $project: projectQuery });
