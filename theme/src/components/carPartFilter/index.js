@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { themeSettings, text } from '../../lib/settings';
 import CarOptions from './carOptions';
 import api from '../../lib/api';
-import PartSearchButton from './partSearchButton';
+import PZButton from './partSearchButton';
 
 export default class CarPartFilter extends React.Component {
 	_isMounted = false;
@@ -358,7 +358,7 @@ export default class CarPartFilter extends React.Component {
 				<CarOptions options={fuels} 
 					onChange={this.onFuelOptionChange}
 				/>
-				<PartSearchButton
+				<PZButton
 					partSearchItem={this.partSearch}
 				/>
 			</div>

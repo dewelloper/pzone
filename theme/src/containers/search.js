@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { text } from '../lib/settings';
 import MetaTags from '../components/metaTags';
 import ProductList from '../components/productList';
+import MarkSelector from '../components/markselector';
 
 const SearchContainer = props => {
 	const {
@@ -21,7 +22,9 @@ const SearchContainer = props => {
 	return (
 		<Fragment>
 			<MetaTags title={title} />
-
+			<section className="markSelector">
+			<MarkSelector/>
+			</section>
 			<section className="hero is-light">
 				<div className="hero-body">
 					<div className="container">
