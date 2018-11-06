@@ -363,6 +363,15 @@ ajaxRouter.get('/fuels', (req, res, next) => {
 	});
 });
 
+ajaxRouter.get('/pcategories', (req, res, next) => {
+	api.pcategories.list(req.query).then(({ status, json }) => {
+		res
+			.status(status)
+			.header('Cache-Control', DEFAULT_CACHE_CONTROL)
+			.send(json);
+	});
+});
+
 ajaxRouter.get('/test', (req, res, next) => {
 	res.send("{insane:'insan'}");
 });

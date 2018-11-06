@@ -6,104 +6,75 @@ import MarkItem from './item';
 import api from '../../lib/api';
 
 
+
 export default class MarkSelector extends React.Component {
-	_isMounted = false;
+	_firstLoad = false;
 	constructor(props) {
 		super(props);
 		this.state = {
-        SelectedMarkName: "",
-		marks  : [
-			{id:1, name: 'Dave',age:50},
-			{id:2,name: 'Kellie',age:42},
-			{id:3,name: 'Max',age:12},
-			{id:4,name: 'Jack',age:12}
-		]
-	};
+			mark: {name:"", sku:"", meta_title:""},
+			marks: []
+		};
 	}
 
-	componentDidMount() {
-		this._isMounted = true;
-		this.fetchmarks(this.props);
+	onMarkChange(data) {
+		let newState = Object.assign({}, this.state);
+		newState.mark = this.state.marks.find(k=> k.attributes[0].value === data.target.innerText.split('/')[0].trim());
+		this.setState(newState);
 	}
 
-	componentWillReceiveProps(nextProps) {
-		this.fetchmarks(nextProps);
-	}
+	addToCart() {
+		const { addCartItem } = this.props;
 
+		let item = {
+			product_id: this.state.mark.id,
+			quantity: 1
+		};
 
-	componentWillUnmount() {
-		this._isMounted = false;
-	}
-
-	onMarkChange(params) {
-		console.log('clicked' + params)
-		// let { marks } = this.state;
-		// let { selectedCarOptions } = this.state;
-		// let { selectedModelOptions } = this.state;
-		
-		// const markName = marks[0].values.find(k=> k.id == valueId).name;
-
-		// if (valueId === '') {
-		// 	delete selectedCarOptions[valueId];
-		// } else {
-		// 	selectedCarOptions = markName;
-		// }
-		//  this.setState({ selectedCarOptions: markName });
-		//  this.setState({ selectedModelOptions: "Seçiniz..." });
-
-		//  this.fetchmodels(markName);
+		addCartItem(item);
 	}
 	
-	fetchmarks = ({	}) => {
-		// const filter = {
-		// };
-
-		// var carComboIndex = 0;
-		// function increase () {
-		// 	return carComboIndex = carComboIndex + 1;
-		// }
-
-		// api.ajax.marks
-		// 	.list(filter)
-		// 	.then(({ json }) => {
-		// 		if(this._isMounted){
-		// 			let newState = Object.assign({}, this.state);
-		// 			var y = json.map(o => ({id: increase(), name: o}));
-		// 			var x = [];
-		// 			x.push(...y);
-		// 			newState.marks[0].values = x;
-		// 			this.setState(newState);
-		// 		}
-		// 	})
-		// 	.catch(() => {});
-	};
-
-
-	partSearch = search => {
-		// let { selectedCarOptions, selectedModelOptions, selectedYearOptions,  selectedEngineOptions, selectedFuelOptions } = this.state;
-		// search = selectedCarOptions +'-'+ selectedModelOptions +'-'+ selectedYearOptions +'-'+ selectedEngineOptions +'-'+ selectedFuelOptions;
-
-		// if (this.props.currentPage.path === '/search') {
-		// 	this.props.props.setSearch(search);
-		// } else {
-		// 	if (search && search !== '') {
-		// 		this.props.props.setLocation('/search?search=' + search);
-		// 		this.props.props.setSearch("");
-		// 	}
-		// }
-	};
-
 	render() {
+		var uniqs = [];
+		function UniqMarks(m) {
+			var isFound = 0;
+			uniqs.forEach(k=> {
+				if(k.attributes[0].value.indexOf(m.attributes[0].value) !== -1)
+					isFound = 1
+			})
+			if(isFound === 0)
+				uniqs.push(m);
+			return;
+		}
 
-		var {marks}  = this.state;
-		var {SelectedMarkName} = this.state;
+		if(!this._firstLoad && this.props.products !== undefined && this.props.products.length > 0){
+			let arr = this.props.products;
+			this.props.products.filter(UniqMarks);
+			
+			var bulmaBtnInf = ["button is-fullwidth is-info is-rounded btnMargin","button is-fullwidth is-warning is-rounded btnMargin","button is-fullwidth is-danger is-rounded btnMargin","button is-fullwidth is-success is-rounded btnMargin","button is-fullwidth is-link is-rounded btnMargin"];
+			var ind = 0;
+			uniqs = uniqs.map(k=> {
+				if(ind > 4) ind=0;
+				return Object.assign({}, k, {
+					backColor : bulmaBtnInf[ind++]
+				  });
+			})
+
+			let newState = Object.assign({}, this.state);
+			newState.marks = uniqs.sort((a, b) => a.regular_price - b.regular_price);
+			newState.mark = newState.marks[0];
+			this.setState(newState);
+			this._firstLoad = true;
+		}
 
 		return (
-			<div className="columns is-centered is-mobile">
-				<MarkItem marks={marks} 
-                    onMarkChange={() => this.onMarkChange.bind(this)}
+			<div className="columns is-centered is-mobile markControlHeight">
+				<MarkItem marks={this.state.marks}
+					onMarkChange={() => this.onMarkChange.bind(this)}
+					mark={this.state.mark}
+					addCartItem={() => this.addToCart.bind(this)}
 				/>
-				
+
 			</div>
 		);
 	}

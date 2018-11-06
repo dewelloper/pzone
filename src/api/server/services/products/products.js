@@ -14,8 +14,15 @@ class ProductsService {
 
 	getMatchTextQueryForParts( prtSearchQuery, search) {
 			return {
-				$or: [{ "sku": { "$in": prtSearchQuery } }, {$text:{$search:search}}]
+				$or: [{ "oem": { "$in": prtSearchQuery } }, {$text:{$search:search}}]
 			};
+	}
+
+	getCategoryId(categoryId) {
+		var objId = new ObjectID(categoryId);
+		return {
+			$and: [{ "category_id": objId}]
+		};
 	}
 
 	async getProducts(params = {}) {
@@ -32,11 +39,10 @@ class ProductsService {
 		const itemsAggregation = [];
 
 		var oems;
-		var matchOems;
-		if (params.search !== undefined && params.search.includes("|")) {
+		var categoryId = "";
+		if (params !== undefined && params.search !== undefined && (params.search.match(/\-/g) || []).length > 1) {
 			var filters = params.search.split('|');
 			var carparts = filters[0].includes('-') ? filters[0] : filters[1];
-			var prtSearchQuery = "";
 			if (carparts != "") {
 				var selections = carparts.split('-');
 				var selectedMark = selections[0];
@@ -44,6 +50,9 @@ class ProductsService {
 				var selectedYear = selections[2];
 				var selectedEngine = selections[3];
 				var selectedFuel = selections[4];
+
+				if(selections.length > 5)
+					categoryId = selections[5];
 
 				oems = await db.collection('tt_cars').distinct('oem', {
 					brand: selectedMark,
@@ -67,11 +76,20 @@ class ProductsService {
 			matchTextQuery = this.getMatchTextQueryForParts(oemsArr,searchTextQuery);
 			itemsAggregation.push({ $match: matchTextQuery });
 		}
-		else {
+		else if(params !== undefined && params.search !== undefined && params.search !== "") {
+			if((params.search.match(/\|/g) || []).length ==1)
+			params.search = params.search.substr(0,params.search.length-1);
 			matchTextQuery = this.getMatchTextQuery(params);
 			if (matchTextQuery) {
 				itemsAggregation.push({ $match: matchTextQuery });
 			}
+		}
+
+		if(categoryId.toString() != ""){
+			var catMatch = this.getCategoryId(categoryId);
+			itemsAggregation.push({ $match: catMatch });
+			//itemsAggregation.push($match: {_id: new ObjectID(categoryId)});
+			
 		}
 
 		itemsAggregation.push({ $project: projectQuery });
@@ -523,7 +541,7 @@ class ProductsService {
 			search !== 'undefined'
 		) {
 			return {
-				$or: [{ sku: new RegExp(search, 'i') }, { $text: { $search: search } }]
+				$or: [{ oem: new RegExp(search, 'i') }, { $text: { $search: search } }]
 			};
 		} else {
 			return null;

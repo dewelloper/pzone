@@ -37,6 +37,8 @@ const scope = {
 	READ_ENGINES: 'write:engines',
 	READ_FUELS: 'read:fuels',
 	READ_FUELS: 'write:fuels',
+	READ_PCATEGORIES: 'read:pcategories',
+	READ_PCATEGORIES: 'write:pcategories',	
 	READ_ORDER_STATUSES: 'read:order_statuses',
 	WRITE_ORDER_STATUSES: 'write:order_statuses',
 	READ_THEME: 'read:theme',

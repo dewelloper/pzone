@@ -19,18 +19,21 @@ const SearchContainer = props => {
 		? `${productFilter.search} - ${text.search}`
 		: text.search;
 
+
 	return (
 		<Fragment>
 			<MetaTags title={title} />
-			<section className="markSelector">
-			<MarkSelector/>
-			</section>
 			<section className="hero is-light">
 				<div className="hero-body">
 					<div className="container">
 						<h1 className="title is-4">{searchDescription}</h1>
 					</div>
 				</div>
+			</section>
+			<section className="markSelector">
+			<MarkSelector 
+				products={products} 
+				addCartItem={addCartItem}/>
 			</section>
 
 			<section className="section">

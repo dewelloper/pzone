@@ -64,6 +64,7 @@ class ProductCategoriesRoute {
 			),
 			this.deleteCategoryImage.bind(this)
 		);
+	
 	}
 
 	getCategories(req, res, next) {
@@ -122,6 +123,7 @@ class ProductCategoriesRoute {
 		CategoriesService.deleteCategoryImage(req.params.id);
 		res.end();
 	}
+
 }
 
 export default ProductCategoriesRoute;

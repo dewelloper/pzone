@@ -127,7 +127,8 @@ const getState = (currentPage, settings, allData, location, productFilter) => {
 		models,
 		years,
 		engines,
-		fuels
+		fuels,
+		pcategories
 	} = allData;
 
 	let productsTotalCount = 0;
@@ -162,6 +163,7 @@ const getState = (currentPage, settings, allData, location, productFilter) => {
 			years: years,
 			engines: engines,
 			fuels: fuels,
+			pcategories: pcategories,
 			productsTotalCount: productsTotalCount,
 			productsHasMore: productsHasMore,
 			productsMinPrice: productsMinPrice,

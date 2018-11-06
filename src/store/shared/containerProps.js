@@ -71,7 +71,7 @@ export const mapDispatchToProps = (dispatch, ownProps) => {
 			if(searchedText == undefined && carPartFilter == undefined)
 				query.search = search+"|";
 			else if(searchedText !== undefined && carPartFilter !== undefined){
-				allfilter = carPartFilter.selectedMark +'-'+carPartFilter.selectedModel+'-'+carPartFilter.selectedYear +'-'+carPartFilter.selectedEngine +'-'+carPartFilter.selectedFuel+'|'+searchedText.SearchText;
+				allfilter = carPartFilter.selectedMark +'-'+carPartFilter.selectedModel+'-'+carPartFilter.selectedYear +'-'+carPartFilter.selectedEngine +'-'+carPartFilter.selectedFuel +'-'+ carPartFilter.selectedCategory+'|'+searchedText.SearchText;
 				query.search =  allfilter;
 			}
 			else if(searchedText !== undefined){
@@ -79,7 +79,7 @@ export const mapDispatchToProps = (dispatch, ownProps) => {
 				query.search =allfilter+"|";
 			}
 			else if(carPartFilter !== undefined){
-				allfilter = carPartFilter.selectedMark +'-'+carPartFilter.selectedModel+'-'+carPartFilter.selectedYear +'-'+carPartFilter.selectedEngine +'-'+carPartFilter.selectedFuel;
+				allfilter = carPartFilter.selectedMark +'-'+carPartFilter.selectedModel+'-'+carPartFilter.selectedYear +'-'+carPartFilter.selectedEngine +'-'+carPartFilter.selectedFuel +'-'+ carPartFilter.selectedCategory;
 				query.search = "|"+allfilter;
 			}
 			

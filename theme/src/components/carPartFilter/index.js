@@ -51,6 +51,7 @@ export default class CarPartFilter extends React.Component {
 				position: 1,
 				values: []
 			}],
+	    selectedFuelOptions : {},
 		fuels : 
 			[{
 				id: '15b84183c6240ba36a00f1580',
@@ -59,7 +60,17 @@ export default class CarPartFilter extends React.Component {
 				required: false,
 				position: 1,
 				values: []
-			}]
+			}],
+		pcategories : 
+			[{
+				id: '15b84183c6240ba36a00f1580',
+				name: 'Kategori',
+				control: 'select',
+				required: false,
+				position: 1,
+				values: []
+			}],
+		selectedCategoryOptions : {}
 			
 	};
 	}
@@ -165,15 +176,46 @@ export default class CarPartFilter extends React.Component {
 		 this.setState({ selectedFuelOptions: fuelValue });
 
 		 var partFilter = {
+			'selectedMark' : selectedCarOptions,
+			'selectedModel' : selectedModelOptions,
+			'selectedYear' : selectedYearOptions,
+			'selectedEngine' : selectedEngineOptions,
+			'selectedFuel' : selectedFuelOptions
+		}
+		this.props.props.setPartFilter(partFilter);
+
+		 this.fetchpcategories(selectedCarOptions, selectedModelOptions, selectedYearOptions, selectedEngineOptions, selectedFuelOptions);
+	}	
+	
+	onCategoryOptionChange = (optionId, valueId) => {
+		let { pcategories } = this.state;
+		let { selectedCarOptions } = this.state;
+		let { selectedModelOptions } = this.state;
+		let { selectedYearOptions } = this.state;
+		let { selectedEngineOptions } = this.state;
+		let { selectedFuelOptions } = this.state;
+		let { selectedCategoryOptions } = this.state;
+
+		const categoryValue = pcategories[0].values.find(k=> k.id == valueId).id;
+
+		if (valueId === '') {
+			delete selectedCategoryOptions[valueId];
+		} else {
+			selectedCategoryOptions = categoryValue;
+		}
+		 this.setState({ selectedCategoryOptions: categoryValue });
+
+		 var partFilter = {
 			 'selectedMark' : selectedCarOptions,
 			 'selectedModel' : selectedModelOptions,
 			 'selectedYear' : selectedYearOptions,
 			 'selectedEngine' : selectedEngineOptions,
-			 'selectedFuel' : selectedFuelOptions
+			 'selectedFuel' : selectedFuelOptions,
+			 'selectedCategory' : selectedCategoryOptions
 		 }
 		 this.props.props.setPartFilter(partFilter);
 	}	
-	
+
 	fetchmarks = ({	}) => {
 		const filter = {
 		};
@@ -318,11 +360,40 @@ export default class CarPartFilter extends React.Component {
 				}
 			})
 			.catch(() => {});
-	};	
+	};
+	
+	fetchpcategories = (markName, modelName, year, engine, fuel) => {
+		const getFilter = (mark, model, offset = 0) => {
+			let filter = {
+				marks: mark,
+				models: model,
+				years: year,
+				engines: engine,
+				offset: offset,
+				fuel: fuel
+			};
+			return filter;
+		};
+
+		let filter =getFilter(markName, modelName, year, engine, fuel);
+		api.ajax.pcategories
+			.list(filter)
+			.then(({ json }) => {
+				if(this._isMounted){
+					let newState = Object.assign({}, this.state);
+					var y = json.map(o => ({id: o._id, name: o.name}));
+					var x = [];
+					x.push(...y);
+					newState.pcategories[0].values = x;
+					this.setState(newState);					
+				}
+			})
+			.catch(() => {});
+	};
 
 	partSearch = search => {
-		let { selectedCarOptions, selectedModelOptions, selectedYearOptions,  selectedEngineOptions, selectedFuelOptions } = this.state;
-		search = selectedCarOptions +'-'+ selectedModelOptions +'-'+ selectedYearOptions +'-'+ selectedEngineOptions +'-'+ selectedFuelOptions;
+		let { selectedCarOptions, selectedModelOptions, selectedYearOptions,  selectedEngineOptions, selectedFuelOptions, selectedCategoryOptions } = this.state;
+		search = selectedCarOptions +'-'+ selectedModelOptions +'-'+ selectedYearOptions +'-'+ selectedEngineOptions +'-'+ selectedFuelOptions +'-'+ selectedCategoryOptions;
 
 		if (this.props.currentPage.path === '/search') {
 			this.props.props.setSearch(search);
@@ -340,6 +411,7 @@ export default class CarPartFilter extends React.Component {
 		var {years}  = this.state;
 		var {engines}  = this.state;
 		var {fuels}  = this.state;
+		var {pcategories}  = this.state;
 
 		return (
 			<div className="mini-car">
@@ -358,6 +430,9 @@ export default class CarPartFilter extends React.Component {
 				<CarOptions options={fuels} 
 					onChange={this.onFuelOptionChange}
 				/>
+				<CarOptions options={pcategories} 
+					onChange={this.onCategoryOptionChange}
+				/>				
 				<PZButton
 					partSearchItem={this.partSearch}
 				/>

@@ -4,7 +4,6 @@
 .containerFrame{
 	border: 1px solid;
   	color:gray;
-    height:250px;
     position:relative;
 }
 .leftFrame{
@@ -23,10 +22,8 @@
 }
 
 .rightFrame{
-	border-left: 1px solid;
   	color:gray;
   	float:right;
-    height:250px;
 }
 
 .rightFrameUl > li{
@@ -35,3 +32,24 @@
     margin-right:20px;
 }
 
+.btnMargin{
+    margin: 5px;
+    border: 1px solid;
+}
+
+.markControlHeight{
+    height:500px;
+}
+.addToCarButtonTopMargin{
+    padding-top: 8px;
+}
+
+@media (max-width: 800px) {
+    .title {
+      font-size: 0.7.3;
+    }
+
+    .subtitle{
+        font-size: 0.5.3rem;
+    }
+  }
