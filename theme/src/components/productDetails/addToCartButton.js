@@ -31,7 +31,7 @@ const AddToCartButton = ({
 	if (product.stock_status === 'discontinued') {
 		return (
 			<button
-				className="button is-dark is-fullwidth"
+				className="button is-dark btnAddToCart"
 				style={buttonStyle}
 				disabled
 			>
@@ -41,7 +41,7 @@ const AddToCartButton = ({
 	} else if (product.variable && variant && variant.stock_quantity > 0) {
 		return (
 			<button
-				className="button is-success is-fullwidth"
+				className="button is-success btnAddToCart"
 				style={buttonStyle}
 				onClick={addCartItem}
 			>
@@ -51,7 +51,7 @@ const AddToCartButton = ({
 	} else if (product.variable && !isAllOptionsSelected) {
 		return (
 			<button
-				className="button is-success is-fullwidth"
+				className="button is-success btnAddToCart"
 				style={buttonStyle}
 				disabled
 			>
@@ -61,7 +61,7 @@ const AddToCartButton = ({
 	} else if (product.variable && !product.stock_backorder) {
 		return (
 			<button
-				className="button is-success is-fullwidth"
+				className="button is-success btnAddToCart"
 				style={buttonStyle}
 				disabled
 			>
@@ -71,7 +71,7 @@ const AddToCartButton = ({
 	} else if (product.stock_status === 'available') {
 		return (
 			<button
-				className="button is-success is-fullwidth"
+				className="button is-success btnAddToCart"
 				style={buttonStyle}
 				onClick={addCartItem}
 			>
@@ -81,7 +81,7 @@ const AddToCartButton = ({
 	} else if (product.stock_status === 'out_of_stock') {
 		return (
 			<button
-				className="button is-success is-fullwidth"
+				className="button is-success btnAddToCart"
 				style={buttonStyle}
 				disabled
 			>

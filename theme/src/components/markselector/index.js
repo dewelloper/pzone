@@ -51,7 +51,7 @@ export default class MarkSelector extends React.Component {
 			let arr = this.props.products;
 			this.props.products.filter(UniqMarks);
 			
-			var bulmaBtnInf = ["button is-fullwidth is-info is-rounded btnMargin","button is-fullwidth is-warning is-rounded btnMargin","button is-fullwidth is-danger is-rounded btnMargin","button is-fullwidth is-success is-rounded btnMargin","button is-fullwidth is-link is-rounded btnMargin"];
+			var bulmaBtnInf = ["button is-fullwidth is-info btnMargin","button is-fullwidth is-warning is-rounded btnMargin","button is-fullwidth is-danger is-rounded btnMargin","button is-fullwidth is-success is-rounded btnMargin","button is-fullwidth is-link is-rounded btnMargin"];
 			var ind = 0;
 			uniqs = uniqs.map(k=> {
 				if(ind > 4) ind=0;

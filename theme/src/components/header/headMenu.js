@@ -55,13 +55,13 @@ class HeadMenuItem extends React.Component {
 				className={
 					(level === 2 ? 'column is-3' : '') +
 					(this.state.isActive ? ' is-active' : '') +
-					(hasItems ? ' has-items' : '')
+					(hasItems ? ' has-items navbuttons' : '')
 				}
 			>
 				<div className="cat-parent">
 					<NavLink
 						activeClassName="is-active"
-						className={hasItems ? 'has-items' : ''}
+						className={hasItems ? 'has-items navbuttons' : ''}
 						to={category.path}
 						onClick={onClick}
 					>

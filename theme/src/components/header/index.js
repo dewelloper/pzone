@@ -147,12 +147,11 @@ export default class Header extends React.Component {
 									/>
 								)}
 								{showBackButton && <BackButton onClick={this.handleGoBack} />}
-							</div>
-
-							<div className="column is-4 has-text-centered">
 								<Logo src={settings.logo} onClick={this.closeAll} alt="logo" />
 							</div>
-							<div className="column is-4 has-text-right header-block-right">
+
+
+							<div className="column is-8 has-text-right header-block-right">
 								<span
 									className="icon icon-search is-hidden-tablet"
 									onClick={this.searchToggle}
