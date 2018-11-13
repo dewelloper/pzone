@@ -304,7 +304,7 @@ body.search-active .mobile-nav {
 }
 
 .navbuttons UL {
-  display: inline-block !important;
+  display: inline-block;
   overflow: auto !important;
   overflow-y: hidden !important;
 
@@ -315,7 +315,11 @@ body.search-active .mobile-nav {
   white-space: nowrap !important;
 }
 
-.navbuttons UL LI {
+.navbuttons UL:hover {
   display: inline-block !important;
-  vertical-align: top !important;
+}
+
+.navbuttons UL LI {
+  display: inline-block;
+  vertical-align: top;
 }

@@ -414,7 +414,7 @@ export default class CarPartFilter extends React.Component {
 		var {pcategories}  = this.state;
 
 		return (
-			<div className="mini-car" style={{padding: '10px', marging:'10px' }}>
+			<div className="mini-car" style={{padding: '10px', margin:'12px' }}>
 				<CarOptions options={marks} 
 					onChange={this.onCarOptionChange}
 				/>

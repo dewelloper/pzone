@@ -13,13 +13,13 @@ const AddToCartButton = ({
 		themeSettings.button_addtocart_bg &&
 		themeSettings.button_addtocart_bg.length > 0
 	) {
-		//buttonStyle.backgroundColor = themeSettings.button_addtocart_bg;
+		buttonStyle.backgroundColor = themeSettings.button_addtocart_bg;
 	}
 	if (
 		themeSettings.button_addtocart_color &&
 		themeSettings.button_addtocart_color.length > 0
 	) {
-		//buttonStyle.color = themeSettings.button_addtocart_color;
+		buttonStyle.color = themeSettings.button_addtocart_color;
 	}
 
 	let addToCartText =

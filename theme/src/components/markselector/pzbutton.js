@@ -10,11 +10,15 @@ const PartSearchButton = ({ partSearchItem }) => {
 
 	return (
 		<button
-			className="button is-success is-fullwidth"
+			className="button is-link is-focused is-fullwidth"
 			style={buttonStyle}
 			onClick={ChangeMark}
 		>
-			{MarkNameText}
+			    <span className="icon is-small">
+				<i className="fas fa-search"></i>
+				</span>
+				<span>{MarkNameText}</span>
+	
 		</button>
 	);
 };

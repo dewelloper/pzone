@@ -16,7 +16,7 @@ const Option = ({ option, onChange }) => {
 
 	return (
 		<div className="product-option">
-			<div className="product-option-name">{option.name}</div>
+			{/* <div className="product-option-name">{option.name}</div> */}
 			<span className="select is-fullwidth">
 				<select
 					onChange={e => {
