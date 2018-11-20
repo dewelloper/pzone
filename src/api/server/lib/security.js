@@ -51,7 +51,9 @@ const scope = {
 	READ_SETTINGS: 'read:settings',
 	WRITE_SETTINGS: 'write:settings',
 	READ_FILES: 'read:files',
-	WRITE_FILES: 'write:files'
+	WRITE_FILES: 'write:files',
+	READ_IMPORTER: 'read:importer',
+	READ_IMPORTER: 'write:importer'
 };
 
 const checkUserScope = (requiredScope, req, res, next) => {

@@ -372,6 +372,15 @@ ajaxRouter.get('/pcategories', (req, res, next) => {
 	});
 });
 
+ajaxRouter.get('/xmlimporter', (req, res, next) => {
+	api.xmlimporter.retrieve(req.query).then(({ status, json }) => {
+		res
+			.status(status)
+			.header('Cache-Control', DEFAULT_CACHE_CONTROL)
+			.send(json);
+	});
+});
+
 ajaxRouter.get('/test', (req, res, next) => {
 	res.send("{insane:'insan'}");
 });
