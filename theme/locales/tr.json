@@ -4,7 +4,7 @@
   "cartEmpty": "Sepetiniz boş",
   "proceedToCheckout": "Sepete Git",
   "subtotal": "Alt toplam",
-  "shipping": "Nakliye",
+  "shipping": "Nakliye Adresi",
   "discount": "İndirim",
   "total": "Toplam",
   "remove": "Taşı",
@@ -72,6 +72,6 @@
   "sameAsShipping": "Teslimat adresi ile aynı",
   "edit": "Düzenle",
   "next": "Sonraki",
-  "customerDetails": "Müşteri detayları",
+  "customerDetails": "Genel Bilgileriniz",
   "payment": "Ödeme"
 }

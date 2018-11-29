@@ -5,9 +5,10 @@ class ShippingMethodsLightService {
 	constructor() {}
 
 	getMethods(filter = {}) {
+		let flt = {};
 		return db
 			.collection('shippingMethods')
-			.find(filter)
+			.find(flt)
 			.toArray()
 			.then(items => items.map(item => this.changeProperties(item)));
 	}
