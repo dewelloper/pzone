@@ -33,8 +33,8 @@ module.exports = {
 		host: 'smtp.gmail.com',
 		port: 465,
 		secure: true,
-		user: 'dewelloper@gmail.com',
-		pass: '**',
+		user: 'hamit.yildirim.5834@gmail.com',
+		pass: '#*@3995%Dimple943**',
 		fromName: 'Araç Parçaları',
 		fromAddress: 'wwww.aracparcalari.com'
 	},
