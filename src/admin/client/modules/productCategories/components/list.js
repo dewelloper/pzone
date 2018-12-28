@@ -87,10 +87,37 @@ export default class Categories extends React.Component {
 
 	handleClickAll = () => {
 		this.props.onSelect('all');
+		document.getElementsByClassName('product-list')[0].style.display = 'block';
+		if (
+			document.getElementsByClassName('spread-sheet-container')[0] !== undefined
+		) {
+			document.getElementsByClassName(
+				'spread-sheet-container'
+			)[0].style.display = 'none';
+		}
 	};
 
 	handleClickRoot = () => {
 		this.props.onSelect('root');
+		document.getElementsByClassName('product-list')[0].style.display = 'block';
+		if (
+			document.getElementsByClassName('spread-sheet-container')[0] !== undefined
+		) {
+			document.getElementsByClassName(
+				'spread-sheet-container'
+			)[0].style.display = 'none';
+		}
+	};
+
+	handleClickImport = () => {
+		document.getElementsByClassName('product-list')[0].style.display = 'none';
+		if (
+			document.getElementsByClassName('spread-sheet-container')[0] !== undefined
+		) {
+			document.getElementsByClassName(
+				'spread-sheet-container'
+			)[0].style.display = 'block';
+		}
 	};
 
 	render() {
@@ -100,6 +127,7 @@ export default class Categories extends React.Component {
 			showAll = false,
 			showRoot = false,
 			showManage = false,
+			showImport = true,
 			rootName = messages.productCategories_root,
 			allName = messages.productCategories_all,
 			opened = false
@@ -146,6 +174,18 @@ export default class Categories extends React.Component {
 							leftIcon={
 								<FontIcon className="material-icons">settings</FontIcon>
 							}
+						/>
+					</Link>
+				)}
+
+				{showImport && (
+					<Link to="/admin/products/import" style={{ textDecoration: 'none' }}>
+						<ListItem
+							className="treeItem"
+							primaryText={messages.drawer_importing}
+							innerDivStyle={styles.innerItem}
+							leftIcon={<FontIcon className="material-icons">get_app</FontIcon>}
+							onClick={this.handleClickImport}
 						/>
 					</Link>
 				)}

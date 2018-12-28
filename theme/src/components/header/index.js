@@ -1,8 +1,10 @@
 import React, { Fragment } from 'react';
 import { NavLink } from 'react-router-dom';
+import Lscache from 'lscache';
 import { themeSettings, text } from '../../lib/settings';
 import Cart from './cart';
 import CartIndicator from './cartIndicator';
+import Login from './login';
 import SearchBox from './searchBox';
 import HeadMenu from './headMenu';
 
@@ -96,9 +98,24 @@ export default class Header extends React.Component {
 		document.body.classList.add('noscroll');
 	};
 
+	handleLogin = () => {
+		Lscache.flushExpired();
+		if (Lscache.get('auth_data') === null) {
+			this.props.loggedinUserTimeUp({
+				authenticated: false
+			});
+			this.props.setLocation('/login');
+		} else {
+			this.props.customerData({
+				token: Lscache.get('auth_data')
+			});
+			this.props.setLocation('/customer-account');
+		}
+	};
+
 	handleSearch = search => {
 		var searchedTextContent = {
-			'SearchText': search
+			SearchText: search
 		};
 
 		if (this.props.state.currentPage.path === '/search') {
@@ -139,7 +156,7 @@ export default class Header extends React.Component {
 				>
 					<div className="container">
 						<div className="columns is-gapless is-mobile header-container">
-							<div className="column is-4">
+							<div className="column is-4 column-burger">
 								{!showBackButton && (
 									<BurgerButton
 										onClick={this.menuToggle}
@@ -147,9 +164,11 @@ export default class Header extends React.Component {
 									/>
 								)}
 								{showBackButton && <BackButton onClick={this.handleGoBack} />}
-								<Logo src={settings.logo} onClick={this.closeAll} alt="logo" />
 							</div>
 
+							<div className="column is-4 has-text-centered column-logo">
+								<Logo src={settings.logo} onClick={this.closeAll} alt="logo" />
+							</div>
 
 							<div className="column is-8 has-text-right header-block-right">
 								<span
@@ -170,7 +189,7 @@ export default class Header extends React.Component {
 										this.state.mobileSearchIsActive ? 'search-active' : ''
 									}
 								/>
-
+								<Login onClick={this.handleLogin} />
 								<CartIndicator
 									cart={cart}
 									onClick={this.cartToggle}

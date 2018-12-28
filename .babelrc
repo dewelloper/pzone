@@ -1,4 +1,29 @@
 {
-    "presets": ["@babel/react", "@babel/preset-env"],
-    "plugins": ["@babel/transform-runtime"]
+    "presets": ["@babel/react", ["@babel/preset-env", {
+        "useBuiltIns": "usage",
+        "shippedProposals": true,
+        "debug": false,
+        "include": ["es7.promise.finally", "es7.symbol.async-iterator", "es6.array.sort"],
+        "modules": "auto",     
+      }]
+    ],
+    "plugins": ["@babel/transform-runtime","@babel/plugin-proposal-class-properties","syntax-dynamic-import","syntax-object-rest-spread"],
+    "sourceMaps": true,
+    "retainLines": true
 }
+
+
+// {
+//     "presets": ["@babel/react", ["@babel/preset-env", {
+//         "useBuiltIns": false,
+//         "debug": true,
+//         "modules": false,
+//         "targets": {
+//             "node": "current"
+//         }
+//       }]
+//     ],
+//     "plugins": ["syntax-dynamic-import","syntax-object-rest-spread"],
+//     "sourceMaps": true,
+//     "retainLines": true
+// }

@@ -136,6 +136,8 @@ export const getFieldLabelByKey = key => {
 			return text.phone;
 		case 'company':
 			return text.company;
+		case 'password':
+			return text.password;
 		case 'mobile':
 			return text.mobile;
 		case 'city':

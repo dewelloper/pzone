@@ -116,6 +116,7 @@ export default class ConfirmationDialog extends React.Component {
 				search: value
 			})
 			.then(productsResponse => {
+				console.log(productsResponse.json.data);
 				this.setState({
 					products: productsResponse.json.data
 				});

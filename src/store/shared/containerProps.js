@@ -9,11 +9,16 @@ import {
 	fetchShippingMethods,
 	fetchPaymentMethods,
 	updateCart,
+	customerData,
 	checkout,
 	setCarPartFilterMethod,
 	setSearchedTextMethod,
 	getPartFilter,
-	getSearchedText
+	getSearchedText,
+	loginUser,
+	loggedinUserTimeUp,
+	changeCustomerProperties,
+	registerUser
 } from './actions';
 
 const setQuery = (history, query) => {
@@ -44,6 +49,21 @@ export const mapDispatchToProps = (dispatch, ownProps) => {
 		updateCart: (data, callback) => {
 			dispatch(updateCart(data, callback));
 		},
+		loginUser: (data, callback) => {
+			dispatch(loginUser(data, callback));
+		},
+		loggedinUserTimeUp: (data, callback) => {
+			dispatch(loggedinUserTimeUp(data, callback));
+		},
+		changeCustomerProperties: (data, callback) => {
+			dispatch(changeCustomerProperties(data, callback));
+		},
+		customerData: (data, callback) => {
+			dispatch(customerData(data, callback));
+		},
+		registerUser: (data, callback) => {
+			dispatch(registerUser(data, callback));
+		},
 		checkout: data => {
 			dispatch(checkout(data, ownProps.history));
 		},
@@ -61,28 +81,50 @@ export const mapDispatchToProps = (dispatch, ownProps) => {
 		},
 		setSearchedText: searchedText => {
 			dispatch(setSearchedTextMethod(searchedText, ownProps.history));
-		},		
+		},
 		setSearch: search => {
 			var query = queryString.parse(ownProps.history.location.search);
-			
+
 			var carPartFilter = dispatch(getPartFilter());
 			var searchedText = dispatch(getSearchedText());
-			var allfilter = "";
-			if(searchedText == undefined && carPartFilter == undefined)
-				query.search = search+"|";
-			else if(searchedText !== undefined && carPartFilter !== undefined){
-				allfilter = carPartFilter.selectedMark +'-'+carPartFilter.selectedModel+'-'+carPartFilter.selectedYear +'-'+carPartFilter.selectedEngine +'-'+carPartFilter.selectedFuel +'-'+ carPartFilter.selectedCategory+'|'+searchedText.SearchText;
-				query.search =  allfilter;
-			}
-			else if(searchedText !== undefined){
+			var allfilter = '';
+			if (searchedText == undefined && carPartFilter == undefined)
+				query.search = search + '|';
+			else if (searchedText !== undefined && carPartFilter !== undefined) {
+				allfilter =
+					carPartFilter.selectedMark +
+					'-' +
+					carPartFilter.selectedModel +
+					'-' +
+					carPartFilter.selectedYear +
+					'-' +
+					carPartFilter.selectedEngine +
+					'-' +
+					carPartFilter.selectedFuel +
+					'-' +
+					carPartFilter.selectedCategory +
+					'|' +
+					searchedText.SearchText;
+				query.search = allfilter;
+			} else if (searchedText !== undefined) {
 				allfilter = searchedText.SearchText;
-				query.search =allfilter+"|";
+				query.search = allfilter + '|';
+			} else if (carPartFilter !== undefined) {
+				allfilter =
+					carPartFilter.selectedMark +
+					'-' +
+					carPartFilter.selectedModel +
+					'-' +
+					carPartFilter.selectedYear +
+					'-' +
+					carPartFilter.selectedEngine +
+					'-' +
+					carPartFilter.selectedFuel +
+					'-' +
+					carPartFilter.selectedCategory;
+				query.search = '|' + allfilter;
 			}
-			else if(carPartFilter !== undefined){
-				allfilter = carPartFilter.selectedMark +'-'+carPartFilter.selectedModel+'-'+carPartFilter.selectedYear +'-'+carPartFilter.selectedEngine +'-'+carPartFilter.selectedFuel +'-'+ carPartFilter.selectedCategory;
-				query.search = "|"+allfilter;
-			}
-			
+
 			setQuery(ownProps.history, query);
 		},
 		setSort: sort => {
@@ -92,7 +134,7 @@ export const mapDispatchToProps = (dispatch, ownProps) => {
 			const query = queryString.parse(ownProps.history.location.search);
 			query.price_from = priceFrom;
 			query.price_to = priceTo;
-			setQuery(ownPro.ps.history, query);
+			setQuery(ownProps.history, query);
 		},
 		setPriceFrom: priceFrom => {
 			const query = queryString.parse(ownProps.history.location.search);

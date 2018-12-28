@@ -133,6 +133,8 @@ const requestCart = () => ({ type: t.CART_REQUEST });
 
 const receiveCart = cart => ({ type: t.CART_RECEIVE, cart });
 
+const receiveCustomer = data => ({ type: t.CUSTOMER_RECEIVE, data });
+
 export const addCartItem = item => async (dispatch, getState) => {
 	dispatch(requestAddCartItem());
 	const response = await api.ajax.cart.addItem(item);
@@ -210,6 +212,9 @@ export const checkout = (cart, history) => async (dispatch, getState) => {
 			billing_address: cart.billing_address,
 			email: cart.email,
 			mobile: cart.mobile,
+			first_name: cart.first_name,
+			last_name: cart.last_name,
+			password: cart.password,
 			payment_method_id: cart.payment_method_id,
 			shipping_method_id: cart.shipping_method_id,
 			comments: cart.comments
@@ -237,6 +242,10 @@ export const checkout = (cart, history) => async (dispatch, getState) => {
 const requestCheckout = () => ({ type: t.CHECKOUT_REQUEST });
 
 const receiveCheckout = order => ({ type: t.CHECKOUT_RECEIVE, order });
+
+const handleRegisterSuccess = () => ({ type: t.REGISTERED_TRUE });
+const handleRegisterFailed = () => ({ type: t.REGISTERED_FALSE });
+const handleAccountProperties = data => ({ type: t.ACCOUNT_RECEIVE, data });
 
 export const receiveSitemap = currentPage => ({
 	type: t.SITEMAP_RECEIVE,
@@ -296,6 +305,54 @@ export const updateCart = (data, callback) => async (dispatch, getState) => {
 	if (typeof callback === 'function') {
 		callback(newCart);
 	}
+};
+
+export const customerData = (data, callback) => async (dispatch, getState) => {
+	const response = await api.ajax.account.retrieve(data);
+	let decodedJSON = Buffer.from(response.json, 'base64').toString('ascii');
+	decodedJSON = JSON.parse(decodedJSON);
+	dispatch(handleAccountProperties(decodedJSON));
+};
+
+export const loginUser = (data, callback) => async (dispatch, getState) => {
+	const response = await api.ajax.login.retrieve(data);
+	let decodedJSON = Buffer.from(response.json, 'base64').toString('ascii');
+	decodedJSON = JSON.parse(decodedJSON);
+	dispatch(handleAccountProperties(decodedJSON));
+	if (decodedJSON.authenticated) {
+		data.history.push('/customer-account');
+	}
+};
+
+export const loggedinUserTimeUp = (data, callback) => async (
+	dispatch,
+	getState
+) => {
+	const customerProps = {
+		token: '',
+		authenticated: false,
+		customer_settings: null,
+		order_statuses: null
+	};
+	dispatch(handleAccountProperties(customerProps));
+};
+
+export const registerUser = (data, callback) => async (dispatch, getState) => {
+	const response = await api.ajax.register.retrieve(data);
+	if (response.json) {
+		dispatch(handleRegisterSuccess(true));
+	}
+	dispatch(handleRegisterFailed(false));
+};
+
+export const changeCustomerProperties = (data, callback) => async (
+	dispatch,
+	getState
+) => {
+	const response = await api.ajax.account.update(data);
+	let decodedJSON = Buffer.from(response.json, 'base64').toString('ascii');
+	decodedJSON = JSON.parse(decodedJSON);
+	dispatch(handleAccountProperties());
 };
 
 export const setCurrentPage = location => async (dispatch, getState) => {
@@ -383,15 +440,15 @@ export const setSearchedTextMethod = searchedText => (dispatch, getState) => {
 	dispatch(setSearchedText(searchedText));
 };
 
-export const getPartFilter =  () => (dispatch, getState) => {
+export const getPartFilter = () => (dispatch, getState) => {
 	const { app } = getState();
 	return app.carPartFilter;
-}
+};
 
-export const getSearchedText =  () => (dispatch, getState) => {
+export const getSearchedText = () => (dispatch, getState) => {
 	const { app } = getState();
 	return app.searchedText;
-}
+};
 
 const fetchDataOnCurrentPageChange = currentPage => (dispatch, getState) => {
 	const { app } = getState();

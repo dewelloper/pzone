@@ -1,6 +1,8 @@
 @import "~bulma/sass/utilities/initial-variables";
 
 $green: #00b366;
+$login: #116363;
+$registry: orange;
 $primary: $green;
 $link: #000;
 
@@ -125,3 +127,5 @@ MOBILE
 @import "custom.scss";
 @import "car.scss";
 @import "mark.scss";
+@import "login.scss";
+@import "account.scss";

@@ -2,6 +2,9 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import PzClient from 'pz-client';
 import serverSettings from './lib/settings';
+import { db } from './lib/mongo';
+import AuthHeader from './lib/auth-header';
+
 const ajaxRouter = express.Router();
 
 const TOKEN_PAYLOAD = { email: 'store', scopes: ['admin'] };
@@ -129,6 +132,192 @@ ajaxRouter.get('/cart', (req, res, next) => {
 	}
 });
 
+ajaxRouter.post('/customer-account', async (req, res, next) => {
+	const customerData = {
+		token: '',
+		authenticated: false,
+		customer_settings: null,
+		order_statuses: null
+	};
+
+	customerData.token = AuthHeader.decodeUserLoginAuth(req.body.token);
+	const userId = JSON.stringify(customerData.token.userId).replace(/["']/g, '');
+	const filter = {
+		customer_id: userId
+	};
+
+	await api.customers.retrieve(userId).then(({ status, json }) => {
+		customerData.customer_settings = json;
+		customerData.customer_settings.password = '*******';
+		customerData.token = AuthHeader.encodeUserLoginAuth(userId);
+		customerData.authenticated = false;
+	});
+
+	await api.orders.list(filter).then(({ status, json }) => {
+		customerData.order_statuses = json;
+		let objJsonB64 = JSON.stringify(customerData);
+		objJsonB64 = Buffer.from(objJsonB64).toString('base64');
+		res.status(status).send(JSON.stringify(objJsonB64));
+	});
+});
+
+ajaxRouter.post('/login', async (req, res, next) => {
+	const customerData = {
+		token: '',
+		authenticated: false,
+		loggedin_failed: false,
+		customer_settings: null,
+		order_statuses: null
+	};
+
+	await db
+		.collection('customers')
+		.find({
+			email: req.body.email,
+			password: AuthHeader.decodeUserPassword(req.body.password).password
+		})
+		.limit(1)
+		.next(function getCustomerData(error, result) {
+			if (error) {
+				//alert
+				throw error;
+			}
+			if (!result) {
+				api.customers.list().then(({ status, json }) => {
+					customerData.loggedin_failed = true;
+					let objJsonB64 = JSON.stringify(customerData);
+					objJsonB64 = Buffer.from(objJsonB64).toString('base64');
+					res.status(status).send(JSON.stringify(objJsonB64));
+				});
+
+				return;
+			}
+
+			customerData.token = AuthHeader.encodeUserLoginAuth(result._id);
+			customerData.authenticated = true;
+
+			api.customers.retrieve(result._id).then(({ status, json }) => {
+				customerData.customer_settings = json;
+				customerData.customer_settings.password = '*******';
+
+				const filter = {
+					customer_id: json.id
+				};
+				api.orders.list(filter).then(({ status, json }) => {
+					customerData.order_statuses = json;
+
+					let objJsonB64 = JSON.stringify(customerData);
+					objJsonB64 = Buffer.from(objJsonB64).toString('base64');
+					res.status(status).send(JSON.stringify(objJsonB64));
+				});
+			});
+		});
+});
+
+ajaxRouter.post('/register', async (req, res, next) => {
+	await api.customers.list().then(({ status, json }) => {
+		db.collection('customers')
+			.find({ email: req.body.email })
+			.limit(1)
+			.next(function(error, result) {
+				if (error) {
+					//alert
+					throw error;
+				}
+				if (result) {
+					res.status(status).send(false);
+					return;
+				}
+
+				db.collection('customers').insertOne(
+					{
+						date_created: new Date(),
+						date_updated: null,
+						total_spent: 0,
+						orders_count: 0,
+						full_name: req.body.first_name + ' ' + req.body.last_name,
+						first_name: req.body.first_name,
+						last_name: req.body.last_name,
+						mobile: '',
+						email: req.body.email,
+						password: req.body.password,
+						note: '',
+						gender: '',
+						group_id: null,
+						tags: [],
+						social_accounts: [],
+						birthdate: null,
+						addresses: null,
+						browser: null
+					},
+					function(error, result) {
+						if (error) {
+							//alert
+							throw error;
+						}
+						res.status(status).send(true);
+					}
+				);
+			});
+	});
+});
+
+ajaxRouter.put('/customer-account', async (req, res, next) => {
+	const customerDataObj = {
+		token: '',
+		authenticated: false,
+		customer_settings: null,
+		order_statuses: null
+	};
+	const customerData = req.body;
+	const token = AuthHeader.decodeUserLoginAuth(req.body.token);
+	const userId = JSON.stringify(token.userId).replace(/["']/g, '');
+	await api.customers.retrieve(userId).then(({ status, json }) => {
+		db.collection('customers').update(
+			{ _id: ObjectID(json.id) },
+			{
+				$set: {
+					first_name: customerData.first_name,
+					last_name: customerData.last_name,
+					email: customerData.email,
+					password: AuthHeader.decodeUserPassword(customerData.password)
+						.password
+				}
+			},
+			function(error, result) {
+				if (error) {
+					//alert
+					throw error;
+				}
+
+				customerDataObj.customer_settings = result;
+				customerDataObj.customer_settings.password = '*******';
+				customerDataObj.token = AuthHeader.encodeUserLoginAuth(userId);
+				customerData.authenticated = false;
+				db.collection('orders').update(
+					{ customer_id: ObjectID(json.id) },
+					{
+						$set: {
+							shipping_address: customerData.shipping_address,
+							billing_address: customerData.billing_address
+						}
+					},
+					function(error, result) {
+						if (error) {
+							//alert
+							throw error;
+						}
+						customerDataObj.order_statuses = status;
+						let objJsonB64 = JSON.stringify(customerDataObj);
+						objJsonB64 = Buffer.from(objJsonB64).toString('base64');
+						res.status(status).send(JSON.stringify(objJsonB64));
+					}
+				);
+			}
+		);
+	});
+});
+
 ajaxRouter.post('/cart/items', (req, res, next) => {
 	const isHttps = req.protocol === 'https';
 	const CART_COOKIE_OPTIONS = getCartCookieOptions(isHttps);
@@ -158,6 +347,10 @@ ajaxRouter.post('/cart/items', (req, res, next) => {
 			.retrieve()
 			.then(settingsResponse => {
 				const storeSettings = settingsResponse.json;
+				orderDraft.shipping_address.address1 =
+					storeSettings.default_shipping_address1;
+				orderDraft.shipping_address.address2 =
+					storeSettings.default_shipping_address2;
 				orderDraft.shipping_address.country =
 					storeSettings.default_shipping_country;
 				orderDraft.shipping_address.state =

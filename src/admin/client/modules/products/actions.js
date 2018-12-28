@@ -174,6 +174,8 @@ const getFilter = (state, offset = 0) => {
 	const searchTerm = state.products.filter.search;
 	const sortOrder = searchTerm && searchTerm.length > 0 ? 'search' : 'name';
 
+	console.log(searchTerm);
+
 	let filter = {
 		limit: 50,
 		fields:
@@ -331,6 +333,8 @@ export function createProduct(history) {
 			category_id: state.productCategories.selectedId
 		};
 
+		console.log(state.productCategories.selectedId);
+
 		return api.products
 			.create(productDraft)
 			.then(({ status, json }) => {
@@ -338,6 +342,12 @@ export function createProduct(history) {
 				history.push('/admin/product/' + json.id);
 			})
 			.catch(error => {});
+	};
+}
+
+export function importProducts(history) {
+	return (dispatch, getState) => {
+		return {};
 	};
 }
 

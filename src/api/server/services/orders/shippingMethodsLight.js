@@ -5,7 +5,7 @@ class ShippingMethodsLightService {
 	constructor() {}
 
 	getMethods(filter = {}) {
-		let flt = {};
+		let flt = {}; //++HH
 		return db
 			.collection('shippingMethods')
 			.find(flt)

@@ -3,6 +3,7 @@ import { Field, reduxForm } from 'redux-form';
 import { themeSettings, text } from '../../lib/settings';
 import InputField from './inputField';
 import TextareaField from './textareaField';
+import CreditCardInput from 'react-credit-card-input';
 
 const validateRequired = value =>
 	value && value.length > 0 ? undefined : text.required;
@@ -38,9 +39,30 @@ class CheckoutStepShipping extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			billingAsShipping: true
+			billingAsShipping: true,
+			cardNumber: '',
+			expiry: '',
+			cvc: ''
 		};
 	}
+
+	handleCardNumberChange = () => {
+		this.setState({
+			cardNumber: event.target.value
+		});
+	};
+
+	handleCardExpiryChange = () => {
+		this.setState({
+			expiry: event.target.value
+		});
+	};
+
+	handleCardCVCChange = () => {
+		this.setState({
+			cvc: event.target.value
+		});
+	};
 
 	onChangeBillingAsShipping = event => {
 		this.setState({
@@ -70,6 +92,8 @@ class CheckoutStepShipping extends React.Component {
 			showPaymentForm,
 			onEdit
 		} = this.props;
+
+		console.log(this.props.initialValues);
 
 		const hideBillingAddress = settings.hide_billing_address === true;
 		const commentsField = checkoutFields.find(f => f.name === 'comments');
@@ -128,13 +152,12 @@ class CheckoutStepShipping extends React.Component {
 					</h1>
 					{shippingFields}
 
-					{!hideCommentsField &&
-						initialValues.comments !== '' && (
-							<div className="checkout-field-preview">
-								<div className="name">{commentsFieldLabel}</div>
-								<div className="value">{initialValues.comments}</div>
-							</div>
-						)}
+					{!hideCommentsField && initialValues.comments !== '' && (
+						<div className="checkout-field-preview">
+							<div className="name">{commentsFieldLabel}</div>
+							<div className="value">{initialValues.comments}</div>
+						</div>
+					)}
 
 					<div className="checkout-button-wrap">
 						<button
@@ -270,10 +293,68 @@ class CheckoutStepShipping extends React.Component {
 							</div>
 						)}
 
+						<div className="checkout-step">
+							<h1>
+								<span>3</span>Kredi Kartı Bilgileri
+							</h1>
+							<CreditCardInput
+								cardCVCInputRenderer={({ handleCardCVCChange, props }) => (
+									<input
+										{...props}
+										onChange={handleCardCVCChange(e =>
+											console.log('cvc change', e)
+										)}
+									/>
+								)}
+								cardExpiryInputRenderer={({
+									handleCardExpiryChange,
+									props
+								}) => (
+									<input
+										{...props}
+										onChange={handleCardExpiryChange(e =>
+											console.log('expiry change', e)
+										)}
+									/>
+								)}
+								cardNumberInputRenderer={({
+									handleCardNumberChange,
+									props
+								}) => (
+									<input
+										{...props}
+										onChange={handleCardNumberChange(e =>
+											console.log('number change', e)
+										)}
+									/>
+								)}
+								customTextLabels={{
+									invalidCardNumber: 'Kart numarası hatalı',
+									expiryError: {
+										invalidExpiryDate: 'Son kullanım tarihi hatalı',
+										monthOutOfRange: 'Ay alanını yanlış girdiniz',
+										yearOutOfRange: 'Yıl alanını yanlış girdiniz',
+										dateOutOfRange: 'Tarih alanını yanlış girdiniz'
+									},
+									invalidCvc: 'CVC doğru değil',
+									invalidZipCode: 'ZIP kod hatalı',
+									cardNumberPlaceholder: 'Kart numarası',
+									expiryPlaceholder: 'AA/YY',
+									cvcPlaceholder: 'CVC',
+									zipPlaceholder: 'Zip'
+								}}
+							/>
+						</div>
 						<div className="checkout-button-wrap">
 							<button
 								type="submit"
-								disabled={submitting || processingCheckout || invalid}
+								disabled={
+									submitting ||
+									processingCheckout ||
+									invalid ||
+									initialValues.shipping_method_id === null ||
+									initialValues.payment_method_id === null
+								}
 								className={`${buttonClassName}${
 									processingCheckout ? ' is-loading' : ''
 								}`}

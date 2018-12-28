@@ -89,6 +89,26 @@ class GeneralSettings extends React.Component {
 
 					<div className={style.innerBox}>
 						<div className="row between-xs middle-xs">
+							<div className="col-xs-12 col-sm-6">{messages.language}</div>
+							<div className="col-xs-12 col-sm-6">
+								<Field
+									component={TextField}
+									fullWidth={true}
+									name="language"
+									type="string"
+									placeholder="Language"
+								/>
+							</div>
+						</div>
+
+						<Divider
+							style={{
+								marginTop: 10,
+								marginBottom: 10
+							}}
+						/>
+
+						<div className="row between-xs middle-xs">
 							<div className="col-xs-12 col-sm-6">{messages.currency}</div>
 							<div className="col-xs-12 col-sm-6">
 								<Field

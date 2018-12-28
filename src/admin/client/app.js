@@ -7,6 +7,7 @@ import Logout from 'routes/logout';
 import Home from 'routes/home';
 import NotFound from 'routes/notFound';
 import Products from 'routes/products';
+import ProductImport from 'routes/products/import';
 import ProductDetails from 'routes/products/edit';
 import ProductCategories from 'routes/products/categories';
 import Customers from 'routes/customers';
@@ -67,6 +68,7 @@ export default () => (
 						<Route path="/admin/login" component={Login} />
 						<Route path="/admin/logout" component={Logout} />
 						<Route path="/admin/products" exact component={Products} />
+						<Route path="/admin/products/import" component={ProductImport} />
 						<Route
 							path="/admin/products/categories"
 							exact

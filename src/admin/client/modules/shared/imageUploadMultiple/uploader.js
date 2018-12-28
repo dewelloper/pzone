@@ -12,6 +12,11 @@ export default class MultiUploader extends React.Component {
 		files.map(file => {
 			form.append('file', file);
 		});
+
+		console.log(files);
+
+		console.log(form);
+
 		this.props.onUpload(form);
 	};
 

@@ -50,6 +50,24 @@ const addAllPages = async db => {
 		enabled: true,
 		is_system: false
 	});
+	await addPage(db, {
+		slug: 'login',
+		meta_title: 'Login or Register',
+		enabled: true,
+		is_system: true
+	});
+	await addPage(db, {
+		slug: 'register',
+		meta_title: 'Login or Register',
+		enabled: true,
+		is_system: true
+	});
+	await addPage(db, {
+		slug: 'customer-account',
+		meta_title: 'Customer Account',
+		enabled: true,
+		is_system: true
+	});
 };
 
 const addAllProducts = async db => {
@@ -310,8 +328,11 @@ const createAllIndexes = async db => {
 
 	if (customersIndexes.length === 1) {
 		await createIndex(db, 'customers', { group_id: 1 });
-		await createIndex(db, 'customers', { email: 1 });
+		await createIndex(db, 'customers', { email: 1 }, { unique: true });
 		await createIndex(db, 'customers', { mobile: 1 });
+		await createIndex(db, 'customers', { first_name: 1 });
+		await createIndex(db, 'customers', { last_name: 1 });
+		await createIndex(db, 'customers', { password: 1 });
 		await createIndex(
 			db,
 			'customers',
@@ -335,6 +356,9 @@ const createAllIndexes = async db => {
 		await createIndex(db, 'orders', { customer_id: 1 });
 		await createIndex(db, 'orders', { email: 1 });
 		await createIndex(db, 'orders', { mobile: 1 });
+		await createIndex(db, 'orders', { first_name: 1 });
+		await createIndex(db, 'orders', { last_name: 1 });
+		await createIndex(db, 'orders', { password: 1 });
 		await createIndex(
 			db,
 			'orders',
@@ -385,71 +409,63 @@ const addSettings = async (db, { domain }) => {
 };
 
 const addTtCars = async db => {
-	const ttCarsCount = await db
-		.collection('tt_cars')
-		.countDocuments({});
+	const ttCarsCount = await db.collection('tt_cars').countDocuments({});
 	const ttCarsNotExists = ttCarsCount === 0;
 	if (ttCarsNotExists) {
 		await db.collection('tt_cars').insertOne({
-			oem : '1M5O12405CA',
-			brand : 'FORD',
-			model : 'MONDEO Station (SW)',
-			type : '1.6 i 16V',
-			bodytype : 'Station (SW)',
-			startyear : '1994',
-			endyear : '1996',
-			year : '1994 1995 1996',
-			kv : '65',
-			pm : '88',
-			cc : '1597',
-			breaktype : 'null',
-			brakingsystem : 'Hidrolik',
-			abs : 'null',
-			asr : 'null',
-			axisconfiguration : 'null',
-			capacity : 'null',
-			drive : 'null',
-			enginecode : 'L1J',
-			enginetype : 'Otto',
-			fuel : 'Benzin',
-			drivetype : 'Önden tahrik'
-			}
-		);
+			oem: '1M5O12405CA',
+			brand: 'FORD',
+			model: 'MONDEO Station (SW)',
+			type: '1.6 i 16V',
+			bodytype: 'Station (SW)',
+			startyear: '1994',
+			endyear: '1996',
+			year: '1994 1995 1996',
+			kv: '65',
+			pm: '88',
+			cc: '1597',
+			breaktype: 'null',
+			brakingsystem: 'Hidrolik',
+			abs: 'null',
+			asr: 'null',
+			axisconfiguration: 'null',
+			capacity: 'null',
+			drive: 'null',
+			enginecode: 'L1J',
+			enginetype: 'Otto',
+			fuel: 'Benzin',
+			drivetype: 'Önden tahrik'
+		});
 		winston.info('- Added tt_cars');
 	}
 };
 
 const addTtEquivalents = async db => {
-	const ttCarsCount = await db
-		.collection('tt_equivalents')
-		.countDocuments({});
+	const ttCarsCount = await db.collection('tt_equivalents').countDocuments({});
 	const ttCarsNotExists = ttCarsCount === 0;
 	if (ttCarsNotExists) {
 		await db.collection('tt_equivalents').insertOne({
-			oem : '2U7J12405AA',
-			name : 'BOSCH',
-			number : '0242229785',
-			title : 'ATEŞLEME BUJİSİ'
-			}
-		);
+			oem: '2U7J12405AA',
+			name: 'BOSCH',
+			number: '0242229785',
+			title: 'ATEŞLEME BUJİSİ'
+		});
 		winston.info('- Added tt_equivalents');
 	}
 };
 
 const addTtOrginals = async db => {
-	const ttCarsCount = await db
-		.collection('tt_orginals')
-		.countDocuments({});
+	const ttCarsCount = await db.collection('tt_orginals').countDocuments({});
 	const ttCarsNotExists = ttCarsCount === 0;
 	if (ttCarsNotExists) {
 		await db.collection('tt_orginals').insertOne({
-			oem : '1M5O12405CA',
-			name : 'FORD',
-			number : '1090749',
-			title : 'Finish Numarasıdır! BUJI FIESTA (BE91) Yeni:928F12405AF Eski:928F12405AE',
-			price : '35.56'
-			}
-		);
+			oem: '1M5O12405CA',
+			name: 'FORD',
+			number: '1090749',
+			title:
+				'Finish Numarasıdır! BUJI FIESTA (BE91) Yeni:928F12405AF Eski:928F12405AE',
+			price: '35.56'
+		});
 		winston.info('- Added tt_orginals');
 	}
 };
@@ -483,7 +499,7 @@ const addTtOrginals = async db => {
 	await createAllIndexes(db);
 	await addUser(db, userEmail);
 	await addTtCars(db);
-	await addTtEquivalents(db);	
+	await addTtEquivalents(db);
 	await addTtOrginals(db);
 	await addSettings(db, {
 		domain
